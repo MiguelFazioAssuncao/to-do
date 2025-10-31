@@ -27,7 +27,7 @@ export default function TaskItem() {
         }
 
         const data = await response.json();
-        console.log('✅ Tarefa criada:', data);
+        console.log('Tarefa criada:', data);
         Alert.alert('Sucesso', 'Tarefa criada com sucesso!');
         setTaskName('');
         setIsAdding(false);
