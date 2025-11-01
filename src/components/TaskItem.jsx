@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 export default function TaskItem() {
@@ -28,12 +28,10 @@ export default function TaskItem() {
 
         const data = await response.json();
         console.log('Tarefa criada:', data);
-        Alert.alert('Sucesso', 'Tarefa criada com sucesso!');
         setTaskName('');
         setIsAdding(false);
       } catch (error) {
         console.error(error);
-        Alert.alert('Erro', 'Não foi possível criar a tarefa.');
       }
     } else {
       setIsAdding(true);
@@ -46,7 +44,7 @@ export default function TaskItem() {
         <>
           <TextInput
             style={styles.input}
-            placeholder="Add a task"
+            placeholder="Adicionar tarefa"
             placeholderTextColor="#9CA3AF"
             value={taskName}
             onChangeText={setTaskName}
@@ -59,7 +57,7 @@ export default function TaskItem() {
       ) : (
         <TouchableOpacity style={styles.addRow} onPress={handleAddPress} activeOpacity={0.8}>
           <Feather name="plus" size={20} color="#2563EB" style={styles.icon} />
-          <Text style={styles.text}>Add a task</Text>
+          <Text style={styles.text}>Adicionar tarefa</Text>
         </TouchableOpacity>
       )}
     </View>
