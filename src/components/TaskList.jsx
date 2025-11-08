@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,8 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-export default function TaskList() {
+ const TaskList = (_props, ref) => {
+  const { onNotify } = _props || {};
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
@@ -45,6 +46,17 @@ export default function TaskList() {
     fetchTasks();
   }, []);
 
+  useImperativeHandle(ref, () => ({
+    refresh: fetchTasks,
+    prependTask: (task) => {
+      if (!task) return;
+      setTasks((prev) => [task, ...prev]);
+      if (task.id && !animationValues[task.id]) {
+        animationValues[task.id] = new Animated.Value(1);
+       }
+    },
+  }));
+
   const confirmDelete = (task) => {
     setTaskToDelete(task);
     setModalVisible(true);
@@ -59,8 +71,14 @@ export default function TaskList() {
       setTasks((prev) => prev.filter((t) => t.id !== taskToDelete.id));
       setModalVisible(false);
       setTaskToDelete(null);
+      if (typeof onNotify === 'function') {
+        onNotify('Tarefa deletada');
+      }
     } catch (error) {
       console.error(error);
+      if (typeof onNotify === 'function') {
+        onNotify('Erro ao deletar tarefa');
+      }
     }
   };
 
@@ -93,8 +111,14 @@ export default function TaskList() {
       const updated = await response.json();
       setTasks((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
       setSidebarVisible(false);
+      if (typeof onNotify === 'function') {
+        onNotify('Tarefa atualizada');
+      }
     } catch (err) {
       console.error(err);
+      if (typeof onNotify === 'function') {
+        onNotify('Erro ao atualizar tarefa');
+      }
     } finally {
       setSaving(false);
     }
@@ -216,9 +240,12 @@ export default function TaskList() {
           </View>
         </View>
       </Modal>
+
     </View>
   );
-}
+};
+
+export default forwardRef(TaskList);
 
 const styles = StyleSheet.create({
   listContainer: { paddingHorizontal: 16, paddingVertical: 8 },

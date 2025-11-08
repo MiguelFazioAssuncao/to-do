@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-export default function TaskItem() {
+export default function TaskItem({ onCreated, onNotify }) {
   const [isAdding, setIsAdding] = useState(false);
   const [taskName, setTaskName] = useState('');
 
@@ -27,11 +27,19 @@ export default function TaskItem() {
         }
 
         const data = await response.json();
-        console.log('Tarefa criada:', data);
+        if (typeof onCreated === 'function') {
+          onCreated(data);
+        }
+        if (typeof onNotify === 'function') {
+          onNotify('Tarefa criada');
+        }
         setTaskName('');
         setIsAdding(false);
       } catch (error) {
         console.error(error);
+        if (typeof onNotify === 'function') {
+          onNotify('Erro ao criar tarefa');
+        }
       }
     } else {
       setIsAdding(true);

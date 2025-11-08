@@ -1,10 +1,25 @@
-import React, { useState } from 'react';
+ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
 export default function Header({ initialTitle = 'Sem nome' }) {
   const [title, setTitle] = useState(initialTitle);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const saved = window.localStorage.getItem('todo_list_title');
+      if (saved !== null && saved !== undefined) {
+        setTitle(saved);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem('todo_list_title', title);
+    }
+  }, [title]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
